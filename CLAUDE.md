@@ -18,6 +18,39 @@ yarn generate:view               # Scaffold new view (with hooks/domain dirs)
 
 No test framework (Jest/Vitest) is configured. `yarn test` = lint + type-check only.
 
+## IMPORTANT: Documentation-First Development with Context7
+
+Before starting any new task, **always use Context7 MCP to read the latest documentation** for the libraries used in this project. This ensures we use existing components, follow best practices, and avoid reinventing the wheel.
+
+### When to use Context7
+
+- **Starting a new feature/task** — read docs for all relevant libraries below
+- **Building UI components** — search MUI v5 docs for existing components before creating custom ones. Always prefer MUI built-in components (Autocomplete, Select, DatePicker, Dialog, etc.)
+- **Styling** — search MUI v5 `sx` prop docs and Tailwind CSS utility classes. Use MUI for component styling, Tailwind for layout utilities only
+- **Data fetching / mutations** — read React Query v3 docs (NOT v4/v5!) for `useQuery`, `useMutation`, `invalidateQueries` patterns
+- **Forms** — read React Hook Form docs for `useForm`, `Controller`, validation patterns
+- **Routing / layouts** — read Next.js App Router docs for file-based routing, layouts, server components
+- **Any time you're unsure** about API or component props — look it up in Context7 first
+
+### Libraries to reference via Context7
+
+| Library | Use for | Key docs to check |
+|---------|---------|-------------------|
+| **Next.js 16** (App Router) | Routing, layouts, API routes, middleware | App Router, `page.tsx`, `layout.tsx`, `route.ts`, Server Components |
+| **React 19** | Components, hooks, state | Hooks API, `use`, `useTransition`, `useOptimistic` |
+| **TypeScript** | Type safety | Utility types, generics, interfaces |
+| **MUI v5** | UI components, theming | Component API (Button, Table, Drawer, TextField, Select, Autocomplete, etc.), `sx` prop, theme customization |
+| **Tailwind CSS** | Layout utilities | Flexbox, Grid, spacing, responsive |
+| **React Query v3** (3.39.3) | Server state, caching | `useQuery`, `useMutation`, `useQueryClient`, `invalidateQueries` |
+| **React Hook Form** | Form management | `useForm`, `Controller`, `useWatch`, validation with valibot |
+
+### Best practices enforced
+
+- **Never build custom UI when MUI v5 has a component for it** — search MUI docs first
+- **Never guess component props** — read the MUI/RHF/RQ API docs via Context7
+- **Use MUI `sx` for styling, Tailwind only for layout** — no custom CSS unless absolutely necessary
+- **React Query v3 syntax only** — imports from `'react-query'`, NOT `'@tanstack/react-query'`
+
 ## Architecture
 
 **Stack:** Next.js 16 (App Router, Turbo) + React 19 + TypeScript + MUI v5 + Tailwind CSS + React Query v3 (3.39.3)
@@ -432,3 +465,10 @@ const mutation = useMutation(fn, {
 - [ ] No `onMutate` optimistic cache manipulation for money data
 - [ ] UI shows loading/refetching state while fresh data loads
 - [ ] After refetch completes, balances and transaction lists match server state
+
+## Active Technologies
+- TypeScript (strict mode, `--noEmit --incremental`) + Next.js 16 (App Router), React 19, MUI v5, react-query v3 (3.39.3), Tailwind CSS (001-account-drawer)
+- N/A (backend-managed via REST API proxy) (001-account-drawer)
+
+## Recent Changes
+- 001-account-drawer: Added TypeScript (strict mode, `--noEmit --incremental`) + Next.js 16 (App Router), React 19, MUI v5, react-query v3 (3.39.3), Tailwind CSS
