@@ -98,7 +98,7 @@
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-unused-imports": "^4.1.4",
-    "globals": "^15.14.0",
+    "globals": "^17.3.0",
     "typescript-eslint": "^8.20.0"
   },
   "overrides": {
