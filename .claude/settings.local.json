@@ -26,7 +26,11 @@
       "Bash(grep FlexxTablePagination:*)",
       "Bash(npx eslint:*)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(yarn lint:*)",
+      "Bash(yarn lint:fix:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

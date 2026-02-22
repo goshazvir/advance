@@ -11,9 +11,15 @@ import AdvanceActionButtons from '@components/AdvanceActionButtons/AdvanceAction
 
 interface AccountsCtasProps {
   onAccountCreated?: (account: Account) => void;
+  onMoveMoneyClick?: () => void;
+  MoveMoneyDrawer?: React.ReactNode;
 }
 
-const AccountsCtas: React.FC<AccountsCtasProps> = ({onAccountCreated}) => {
+const AccountsCtas: React.FC<AccountsCtasProps> = ({
+  onAccountCreated,
+  onMoveMoneyClick,
+  MoveMoneyDrawer,
+}) => {
   const {openDrawer, CreateAccountDrawer} = useCreateAccount({
     onSuccess: onAccountCreated,
   });
@@ -25,6 +31,12 @@ const AccountsCtas: React.FC<AccountsCtasProps> = ({onAccountCreated}) => {
       onClick: openDrawer,
       startIcon: 'fluent--add-circle-20-regular',
     },
+    {
+      name: 'Move Money',
+      variant: 'outlined',
+      onClick: () => onMoveMoneyClick?.(),
+      startIcon: 'fluent--arrow-swap-20-regular',
+    },
   ];
 
   return (
@@ -33,6 +45,7 @@ const AccountsCtas: React.FC<AccountsCtasProps> = ({onAccountCreated}) => {
         <AdvanceActionButtons actions={actions} />
       </Stack>
       {CreateAccountDrawer}
+      {MoveMoneyDrawer}
     </>
   );
 };
