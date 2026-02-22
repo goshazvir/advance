@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(which uv:*)",
+      "Bash(uv tool:*)",
+      "Bash(specify init:*)",
+      "Bash(git remote:*)",
+      "Bash(ls:*)",
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(yarn install:*)",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+      "Bash(yarn dev:*)",
+      "Bash(git checkout:*)"
+    ]
+  }
+}

@@ -1,0 +1,167 @@
+# Flexx Frontend Development Rules
+
+## Component Development
+
+- Use TypeScript for all new components
+- Follow Material-UI + Advance design system
+- Create reusable components in /src/components/
+- Use existing Flexx components where possible
+- Reference /docs/component-library.md for available components
+
+## Component Structure
+
+- Follow existing patterns in /src/components/FlexxTable/
+- Create domain types in [component]/domain/ folders
+- Use custom hooks for business logic
+- Implement proper loading and error states
+
+## Hook Patterns
+
+- Create custom hooks for business logic in /src/hooks/
+- Use React Query for API calls with proper error handling
+- Follow naming convention: use[Feature][Action]
+- Handle loading, error, and success states consistently
+- Reference existing hooks for patterns
+
+## Styling Guidelines
+
+- Use Material-UI sx prop for component-specific styles
+- Use Tailwind classes for utilities (spacing, colors, layout)
+- Follow Advance design tokens from globals.css
+- Maintain responsive design with proper breakpoints
+- Use consistent spacing and color schemes
+
+## State Management
+
+- Use React Query for server state management
+- Use React Context for global client state
+- Use local state (useState) for component-specific state
+- Follow existing provider patterns in /src/components/Providers.jsx
+
+## API Integration
+
+- Use flexxApi service for all API calls
+- Handle authentication automatically through existing patterns
+- Implement proper error handling with user-friendly messages
+- Use optimistic updates where appropriate
+- Follow existing API integration patterns
+
+## File Organization
+
+When creating new features, follow this structure:
+
+```
+src/views/flexx-apps/[feature]/
+├── components/           # Feature-specific components
+├── hooks/               # Custom hooks for business logic
+├── domain/              # TypeScript types and interfaces
+└── [FeatureName].tsx    # Main feature component
+
+src/components/[ComponentName]/
+├── [ComponentName].tsx  # Main component
+├── domain/              # Types and interfaces
+└── constants/           # Component constants (if needed)
+```
+
+## Form Handling
+
+- Use React Hook Form for form management
+- Use Flexx custom input components from /src/components/FlexxCustomTextInputs/
+- Implement proper validation with clear error messages
+- Follow existing form patterns in the codebase
+- Handle form submission states (loading, success, error)
+
+## Table Components
+
+- Always use FlexxTable for data tables
+- Implement sorting, filtering, and pagination consistently
+- Use custom hooks for table state management
+- Follow patterns in existing table implementations
+- Handle empty states and loading states properly
+
+## Modal and Drawer Patterns
+
+- Use DrawerWrapper for consistent drawer layout
+- Implement proper state management for open/close states
+- Use custom hooks for drawer logic (useDrawerExpansion pattern)
+- Follow existing drawer patterns in the codebase
+- Handle proper cleanup on unmount
+
+## Error Handling
+
+- Use React Error Boundaries for component-level errors
+- Implement proper error states in all components
+- Show user-friendly error messages with actionable steps
+- Log errors appropriately for debugging
+- Handle network errors gracefully
+
+## Performance Optimization
+
+- Use React.memo for expensive components
+- Implement proper loading states with skeletons
+- Use lazy loading for large components and routes
+- Optimize re-renders with proper dependency arrays
+- Use proper key props for list items
+
+## Accessibility
+
+- Use proper ARIA labels and roles
+- Implement keyboard navigation for interactive elements
+- Ensure proper color contrast ratios
+- Follow Material-UI accessibility guidelines
+- Test with screen readers when possible
+
+## Testing Patterns
+
+- Write unit tests for complex components
+- Test custom hooks separately with React Testing Library
+- Test user interactions and edge cases
+- Mock API calls and external dependencies
+- Follow existing test structure and patterns
+
+## Development Tools
+
+- Use scripts/create-component.js to scaffold new components
+- Use scripts/create-component.js --view for new views
+- Follow documentation in /docs/frontend-patterns.md
+- Reference /docs/component-library.md for available components
+
+## Code Quality
+
+- Use ESLint and Prettier for code formatting
+- Follow TypeScript strict mode requirements
+- Use proper type definitions for all props and state
+- Implement proper prop validation
+- Write clear, descriptive component and function names
+
+## Design System Integration
+
+- Use Material-UI components as the base layer
+- Apply Advance design tokens consistently
+- Follow existing color schemes and typography
+- Use consistent spacing patterns (Tailwind classes)
+- Maintain design consistency across all components
+
+## Navigation and Routing
+
+- Use Next.js App Router for navigation
+- Follow existing route structure in /src/app/
+- Implement proper loading states for route transitions
+- Handle authentication-protected routes properly
+- Use proper metadata for SEO
+
+## Data Fetching Best Practices
+
+- Use React Query for all server state
+- Implement proper cache invalidation strategies
+- Handle loading states with appropriate UI feedback
+- Use error boundaries for query errors
+- Implement proper retry logic for failed requests
+
+## Security Considerations
+
+- Validate all user inputs on the client side
+- Use proper authentication checks for protected components
+- Sanitize data before rendering
+- Follow existing security patterns in the codebase
+- Handle sensitive data appropriately

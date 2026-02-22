@@ -1,0 +1,34 @@
+name: Pull Request Tests
+
+on:
+  pull_request:
+    branches: [main]  # Triggers on PRs to main branch
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run sanity test
+        run: yarn test src/__tests__/sanity/sanity.test.ts
+
+  build-staging-pr-tests:
+    uses: ./.github/workflows/build-node-ecr.yml
+    with:
+      aws_ecr_repo_name: 'flexx-frontend-nextjs-stg'
+      environment: staging
+    secrets: inherit
