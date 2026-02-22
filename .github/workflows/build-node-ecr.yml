@@ -1,0 +1,116 @@
+name: Build Node.js App and Push to ECR
+
+on:
+  workflow_call:
+    inputs:
+      aws_ecr_repo_name:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+
+env:
+  ECR_REGISTRY: 590184009357.dkr.ecr.us-east-1.amazonaws.com
+  AWS_REGION: us-east-1
+  IAM_ROLE_ARN: ${{ secrets.DEFAULT_IAM_ROLE_ARN }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - run: yarn install --frozen-lockfile
+
+      - name: Download environment file from AWS Secrets Manager
+        run: |
+          if [ "${{ inputs.environment }}" = "staging" ]; then
+            echo "Downloading .env.staging from AWS Secrets Manager"
+            aws secretsmanager get-secret-value \
+              --secret-id "flexx-env/staging" \
+              --region us-east-1 \
+              --query SecretString \
+              --output text > .env.staging
+            echo "✅ Downloaded .env.staging"
+          elif [ "${{ inputs.environment }}" = "production" ]; then
+            echo "Downloading .env.production from AWS Secrets Manager"
+            aws secretsmanager get-secret-value \
+              --secret-id "flexx-env/production" \
+              --region us-east-1 \
+              --query SecretString \
+              --output text > .env.production
+            echo "✅ Downloaded .env.production"
+          else
+            echo "⚠️  No environment file configured for environment: ${{ inputs.environment }}"
+            echo "Proceeding without environment-specific file"
+          fi
+
+      - name: Build for environment
+        run: |
+          if [ "${{ inputs.environment }}" = "staging" ]; then
+            echo "Building for staging environment"
+            NODE_ENV=staging yarn build:staging
+          elif [ "${{ inputs.environment }}" = "production" ]; then
+            echo "Building for production environment"
+            NODE_ENV=production yarn build:production
+          else
+            echo "Building for ${{ inputs.environment }} environment"
+            NODE_ENV=${{ inputs.environment }} yarn build
+          fi
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push to staging/prod ECR
+        run: |
+          ECR_REGISTRY="${{ env.ECR_REGISTRY }}"
+
+          aws ecr describe-repositories --repository-names ${{ inputs.aws_ecr_repo_name }} || \
+          aws ecr create-repository --repository-name ${{ inputs.aws_ecr_repo_name }}
+
+          docker build -t ${{ inputs.aws_ecr_repo_name }} .
+          docker tag ${{ inputs.aws_ecr_repo_name }}:latest $ECR_REGISTRY/${{ inputs.aws_ecr_repo_name }}:${{ inputs.environment }}-${{ github.sha }}
+          docker tag ${{ inputs.aws_ecr_repo_name }}:latest $ECR_REGISTRY/${{ inputs.aws_ecr_repo_name }}:${{ inputs.environment }}-latest
+          docker push $ECR_REGISTRY/${{ inputs.aws_ecr_repo_name }}:${{ inputs.environment }}-${{ github.sha }}
+          docker push $ECR_REGISTRY/${{ inputs.aws_ecr_repo_name }}:${{ inputs.environment }}-latest
+
+      - name: Push to dev ECR (main branch only)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Configure dev ECR credentials
+          aws configure set role_arn ${{ secrets.DEV_IAM_ROLE_ARN }}
+          aws configure set credential_source EcsContainer
+          aws sts assume-role --role-arn ${{ secrets.DEV_IAM_ROLE_ARN }} --role-session-name dev-ecr-push
+
+          # Login to dev ECR
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
+          docker login --username AWS --password-stdin ${{ secrets.DEV_ECR_REGISTRY }}
+
+          # Create dev repo if needed
+          aws ecr describe-repositories --repository-names flexx-frontend-nextjs-dev || \
+          aws ecr create-repository --repository-name flexx-frontend-nextjs-dev
+
+          # Tag and push to dev ECR
+          DEV_ECR_REGISTRY="${{ secrets.DEV_ECR_REGISTRY }}"
+          docker tag ${{ inputs.aws_ecr_repo_name }}:latest $DEV_ECR_REGISTRY/flexx-frontend-nextjs-dev:latest
+          docker tag ${{ inputs.aws_ecr_repo_name }}:latest $DEV_ECR_REGISTRY/flexx-frontend-nextjs-dev:${{ github.sha }}
+          docker push $DEV_ECR_REGISTRY/flexx-frontend-nextjs-dev:latest
+          docker push $DEV_ECR_REGISTRY/flexx-frontend-nextjs-dev:${{ github.sha }}

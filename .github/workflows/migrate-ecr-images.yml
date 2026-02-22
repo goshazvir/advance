@@ -1,0 +1,92 @@
+name: Migrate ECR Images Between Accounts
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_environment:
+        description: 'Source environment (staging/production)'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      target_environment:
+        description: 'Target environment (dev)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+
+env:
+  AWS_REGION: us-east-1
+  SOURCE_ECR_REGISTRY: 590184009357.dkr.ecr.us-east-1.amazonaws.com
+  TARGET_ECR_REGISTRY: ${{ secrets.DEV_ECR_REGISTRY }}
+  DEV_IAM_ROLE_ARN: ${{ secrets.DEV_IAM_ROLE_ARN }}
+  DEFAULT_IAM_ROLE_ARN: ${{ secrets.DEFAULT_IAM_ROLE_ARN }}
+
+jobs:
+  migrate-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set repository names
+        id: repos
+        run: |
+          if [[ "${{ github.event.inputs.source_environment }}" == "staging" ]]; then
+            echo "source_repo=flexx-frontend-nextjs-stg" >> $GITHUB_OUTPUT
+          else
+            echo "source_repo=flexx-frontend-nextjs" >> $GITHUB_OUTPUT
+          fi
+          echo "target_repo=flexx-frontend-nextjs-dev" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials (Source)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.DEFAULT_IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR (Source)
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Pull image from source
+        run: |
+          docker pull ${{ env.SOURCE_ECR_REGISTRY }}/${{ steps.repos.outputs.source_repo }}:${{ github.event.inputs.source_environment }}-latest
+
+      - name: Configure AWS credentials (Target - DEV)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.DEV_IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR (Target)
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Create target repository if it doesn't exist
+        run: |
+          aws ecr describe-repositories --repository-names ${{ steps.repos.outputs.target_repo }} || \
+          aws ecr create-repository --repository-name ${{ steps.repos.outputs.target_repo }}
+
+      - name: Tag and push to target
+        run: |
+          docker tag ${{ env.SOURCE_ECR_REGISTRY }}/${{ steps.repos.outputs.source_repo }}:${{ github.event.inputs.source_environment }}-latest \
+                     ${{ env.TARGET_ECR_REGISTRY }}/${{ steps.repos.outputs.target_repo }}:dev-latest
+          docker tag ${{ env.SOURCE_ECR_REGISTRY }}/${{ steps.repos.outputs.source_repo }}:${{ github.event.inputs.source_environment }}-latest \
+                     ${{ env.TARGET_ECR_REGISTRY }}/${{ steps.repos.outputs.target_repo }}:dev-migrated-$(date +%Y%m%d-%H%M%S)
+
+          docker push ${{ env.TARGET_ECR_REGISTRY }}/${{ steps.repos.outputs.target_repo }}:dev-latest
+          docker push ${{ env.TARGET_ECR_REGISTRY }}/${{ steps.repos.outputs.target_repo }}:dev-migrated-$(date +%Y%m%d-%H%M%S)
+
+      - name: Migration Summary
+        run: |
+          echo "## ECR Image Migration Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Source:** ${{ steps.repos.outputs.source_repo }}:${{ github.event.inputs.source_environment }}-latest" >> $GITHUB_STEP_SUMMARY
+          echo "**Target:** ${{ steps.repos.outputs.target_repo }}:dev-latest" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Migration completed successfully!**" >> $GITHUB_STEP_SUMMARY

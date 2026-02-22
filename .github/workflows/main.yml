@@ -1,0 +1,76 @@
+name: Build and Push Docker Image to ECR
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write  # For repository dispatch
+
+jobs:
+  build-staging:
+    uses: ./.github/workflows/build-node-ecr.yml
+    with:
+      aws_ecr_repo_name: "flexx-frontend-nextjs-stg"
+      environment: staging
+    secrets: inherit
+
+  # ═══════════════════════════ RELEASE AUTOMATION ═══════════════════════════
+  release-automation:
+    name: Generate Release Notes & Slack Notification
+    runs-on: ubuntu-latest
+    needs: [build-staging]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: latest
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Install dependencies
+        run: |
+          cd scripts/delivery
+          poetry install
+
+      - name: Run Release Automation
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          RELEASE_DRY_RUN: false
+        run: |
+          cd scripts/delivery
+          poetry run python main.py
+
+  deploy-dashboard-to-dev:
+    name: Deploy with TF
+    runs-on: ubuntu-latest
+    needs: [build-staging, release-automation]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Deploy to Dev
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          repository: Flexx-R-D/ops
+          event-type: terraform-target-deploy
+          client-payload: |
+            {
+              "environment": "dev",
+              "service_name": "dashboard",
+              "new_image_tag": "latest"
+            }
