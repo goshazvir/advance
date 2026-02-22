@@ -38,6 +38,8 @@ const NavSearch = () => {
     handleClearSearch();
   }, [pathname]);
 
+  if (pathname === '/home') return null;
+
   return (
     <FlexxTextField
       testID='navbar-search'
