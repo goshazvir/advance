@@ -474,6 +474,7 @@ const mutation = useMutation(fn, {
 - TypeScript (strict mode, `--noEmit --incremental`) + Next.js 16 (App Router), React 19, MUI v5, react-query v3 (3.39.3), React Hook Form, react-toastify (003-move-money)
 - N/A (external backend via two-hop API proxy) (003-move-money)
 - N/A (read-only dashboard, data fetched from existing API) (005-home-dashboard)
+- N/A (documentation changes only — Markdown files) (006-readme-cleanup)
 
 ## Recent Changes
 - 001-account-drawer: Added TypeScript (strict mode, `--noEmit --incremental`) + Next.js 16 (App Router), React 19, MUI v5, react-query v3 (3.39.3), Tailwind CSS

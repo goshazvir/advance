@@ -1,20 +1,38 @@
-# Advance Frontend - Interview Assignment
+# Advance
 
-A Next.js application with the full Advance design system, component library, and layout infrastructure.
+A financial management web application for managing accounts, transactions, and money transfers. Built with Next.js 16, React 19, and MUI v5.
 
-## Prerequisites
+**Live Demo**: [advance-orpin.vercel.app](https://advance-orpin.vercel.app/home)
+
+## Pages & User Flows
+
+### Home (`/home`)
+
+Portfolio overview dashboard with financial summary widgets — total balance, account count, recent transactions, and quick-access cards.
+
+### Accounts (`/accounts`)
+
+Accounts list with search, **Add Account** and **Move Money** actions in the toolbar. Clicking an account row opens a detail drawer showing account info (masked account number, routing number, balance) and a paginated transactions table. From the drawer, users can initiate money transfers.
+
+### Transactions (`/transactions`)
+
+Global transactions table showing all transactions across all accounts. Supports search, column sorting, and pagination with configurable rows per page.
+
+## Getting Started
+
+### Prerequisites
 
 - Node.js 22.9.0
 - Yarn 1.22.22
 
-## Setup
+### Setup
 
 ```bash
 yarn install
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). The app redirects to `/home` by default.
 
 ## Available Commands
 
@@ -22,80 +40,65 @@ Open [http://localhost:3000](http://localhost:3000).
 |---------|-------------|
 | `yarn dev` | Start dev server (Turbo mode) |
 | `yarn build` | Production build |
-| `yarn ts` | TypeScript type check |
+| `yarn test` | Run lint + type check |
 | `yarn lint` | ESLint |
 | `yarn lint:fix` | ESLint autofix |
-| `yarn fm:check` | Prettier check |
-| `yarn fm:fix` | Prettier fix |
+| `yarn fm:fix` | Prettier format |
+| `yarn ts` | TypeScript type check |
 | `yarn generate:component` | Scaffold a new component |
 | `yarn generate:view` | Scaffold a new view |
 
-## Project Structure
+## Architecture & Project Structure
+
+### Tech Stack
+
+- **Next.js 16** (App Router, Turbopack) — routing, layouts, API proxy routes
+- **React 19** — UI components and hooks
+- **TypeScript** — strict mode type safety
+- **MUI v5** — component library and theming (`sx` prop for styling)
+- **Tailwind CSS** — utility classes for layout (preflight disabled to avoid MUI conflicts)
+- **React Query v3** — server state management and caching
+- **React Hook Form + valibot** — form management and validation
+
+### Folder Structure
 
 ```
 src/
-  app/                    # Next.js App Router
+  app/                    # Next.js App Router (pages, layouts, API routes)
   components/             # Reusable UI components (FlexxTable, DrawerWrapper, etc.)
+  views/                  # Feature views (accounts, transactions, home)
   @core/                  # Design system: theme, contexts, hooks, styles
-  @layouts/               # Layout components
-  @menu/                  # Navigation components
-  flexxApi/               # API client layer
-  QueryClient/            # React Query configuration
+  @layouts/               # Layout components (sidebar, dashboard chrome)
+  @menu/                  # Navigation configuration
+  flexxApi/               # API client layer (two-hop proxy pattern)
+  QueryClient/            # React Query configuration and query keys
   hooks/                  # Shared custom hooks
-  domain/                 # TypeScript type definitions
+  domain/                 # TypeScript interfaces and types
   utils/                  # Utility functions
   configs/                # App configuration
-  constants/              # Constants
 ```
 
-## Key Components
+### API Architecture
 
-- **FlexxTable** - Data table with sorting, filtering, pagination
-- **DrawerWrapper** - Drawer/panel layout component
-- **FlexxCustomTextInputs** - Form input components
-- **AdvanceCurrencyText** - Currency formatting component
-- **FlexxDashboardWrapper** - Page wrapper component
+The app uses a **two-hop proxy pattern**: client code calls Next.js API routes (`/api/...`), which proxy requests to the external backend with authentication. All API methods are accessed via the `flexxApiService()` singleton.
 
-## Backend API Schema
+## Feature Specifications
 
-[API Documentation](https://internal-fe-mock-provider.r6zcf729z3zke.us-east-1.cs.amazonlightsail.com/docs)
+Detailed design documents for each feature are in the `specs/` directory:
 
-## Tasks
+| Folder | Feature |
+|--------|---------|
+| `specs/001-account-drawer` | Account detail drawer with transaction history |
+| `specs/002-create-account` | Account creation form and validation flow |
+| `specs/003-move-money` | Money transfer between accounts with confirmation |
+| `specs/004-transactions-dashboard` | Global transactions view with search and pagination |
+| `specs/005-home-dashboard` | Home dashboard with portfolio overview widgets |
 
-This is a FE task evaluating your skills.
-
-### 1. Account Drawer
-
-When clicking on an account in the accounts dashboard, open a drawer that has a header with the account's details and a table with all of its transactions.
-![img.png](img.png)
-![img_1.png](img_1.png)
-
-### 2. Create Account
-
-Implement a "Create Account" CTA on the accounts dashboard. When clicked it should open a drawer with text fields for all the attributes of an account and an "Add Account" button. After creating the account, the accounts dashboard should open the drawer to the newly created account.
-![img_2.png](img_2.png)
-
-### 3. Move Money
-
-Implement a "Move Money" CTA on the accounts dashboard. When clicked it should open a drawer with the following fields: source account, destination account, and amount. Add a checkbox that needs to be checked before being able to initiate the move money. Include a "Move Money" button to submit.
-![img_3.png](img_3.png)
-
-### 4. Transactions Dashboard
-
-Add a transactions dashboard that shows all the transactions in a table.
-![img_4.png](img_4.png)
-
-### Any additional features you would like to add will be appreciated!!
-Be sure to let us know what you have added and why.
-
-### You will be evaluated based on: 
-1. The quality of the code
-2. The UI/UX
-3. The maintainability of the code
+Each folder contains a spec, implementation plan, task breakdown, and research notes.
 
 ## Stack
 
-- Next.js 16 with App Router
+- Next.js 16 (App Router)
 - React 19
 - TypeScript
 - MUI v5
