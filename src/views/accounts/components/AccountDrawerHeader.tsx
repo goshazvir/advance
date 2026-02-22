@@ -39,11 +39,7 @@ const AccountDrawerHeader: React.FC<AccountDrawerHeaderProps> = ({account}) => {
         </Typography>
       </Stack>
 
-      <Stack
-        direction='row'
-        alignItems='center'
-        justifyContent='space-between'
-      >
+      <Stack direction='row' alignItems='center' justifyContent='space-between'>
         <Stack direction='row' gap={4} alignItems='baseline'>
           <Stack spacing={0.25}>
             <AdvanceAccountNumberDisplay

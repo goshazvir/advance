@@ -1,6 +1,16 @@
-import {Account} from '@/domain/Account';
 import {Transaction} from '@/domain/Transaction';
+import {Account, AccountStatus} from '@/domain/Account';
 import {get, post, put, remove} from '@/flexxApi/FlexxApiClientService';
+
+interface CreateAccountPayload {
+  name: string;
+  routing_number: string;
+  account_number: string;
+  bank_name: string;
+  bank_icon: string;
+  status: AccountStatus;
+  balance: number;
+}
 
 class FlexxApiService {
   private formatQueryParams(
@@ -42,6 +52,10 @@ class FlexxApiService {
       endpoint: `pages/accounts/${accountId}/transactions?${queryParams}`,
     });
   }
+
+  async createAccount(payload: CreateAccountPayload): Promise<Account> {
+    return post<Account>({endpoint: 'pages/accounts', body: payload});
+  }
 }
 
 let instance: FlexxApiService | null = null;
@@ -56,4 +70,5 @@ const flexxApiService = (): FlexxApiService => {
 
 export default flexxApiService;
 
+export type {CreateAccountPayload};
 export {get, put, post, remove, FlexxApiService};

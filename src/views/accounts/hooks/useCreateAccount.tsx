@@ -1,16 +1,30 @@
+import type {Account} from '@/domain/Account';
+
 import ReactDOM from 'react-dom';
-import React, {useMemo} from 'react';
+import React, {useCallback, useMemo} from 'react';
 
 import {useBoolean} from '@/hooks/useBoolean';
 import DrawerWrapper from '@components/DrawerWrapper/DrawerWrapper';
 import CreateAccountForm from '@views/accounts/components/CreateAccountForm';
 
-export const useCreateAccount = () => {
+interface UseCreateAccountOptions {
+  onSuccess?: (account: Account) => void;
+}
+
+export const useCreateAccount = (options?: UseCreateAccountOptions) => {
   const {
     value: isOpen,
     onTrue: openDrawer,
     onFalse: closeDrawer,
   } = useBoolean();
+
+  const handleSuccess = useCallback(
+    (account: Account) => {
+      closeDrawer();
+      options?.onSuccess?.(account);
+    },
+    [closeDrawer, options],
+  );
 
   const CreateAccountDrawer = useMemo(() => {
     if (typeof window === 'undefined') return null;
@@ -28,11 +42,15 @@ export const useCreateAccount = () => {
         ]}
         drawerWidth='md'
       >
-        <CreateAccountForm />
+        <CreateAccountForm
+          isOpen={isOpen}
+          onSuccess={handleSuccess}
+          onClose={closeDrawer}
+        />
       </DrawerWrapper>,
       document.body,
     );
-  }, [isOpen, closeDrawer]);
+  }, [isOpen, closeDrawer, handleSuccess]);
 
   return {
     isOpen,

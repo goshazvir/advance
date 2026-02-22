@@ -1,3 +1,7 @@
+'use client';
+
+import type {Account} from '@/domain/Account';
+
 import React from 'react';
 
 import {Stack} from '@mui/material';
@@ -5,8 +9,14 @@ import {useCreateAccount} from '@views/accounts/hooks/useCreateAccount';
 import {ActionButtonConfig} from '@components/AdvanceActionButtons/types';
 import AdvanceActionButtons from '@components/AdvanceActionButtons/AdvanceActionButtons';
 
-const AccountsCtas: React.FC = () => {
-  const {openDrawer, CreateAccountDrawer} = useCreateAccount();
+interface AccountsCtasProps {
+  onAccountCreated?: (account: Account) => void;
+}
+
+const AccountsCtas: React.FC<AccountsCtasProps> = ({onAccountCreated}) => {
+  const {openDrawer, CreateAccountDrawer} = useCreateAccount({
+    onSuccess: onAccountCreated,
+  });
 
   const actions: ActionButtonConfig[] = [
     {
