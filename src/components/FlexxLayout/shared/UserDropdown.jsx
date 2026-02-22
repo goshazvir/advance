@@ -17,7 +17,6 @@ import Divider from '@mui/material/Divider';
 // Util Imports
 import {getLocalizedUrl} from '@/utils/i18n';
 import MenuList from '@mui/material/MenuList';
-import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 // Hook Imports
 import {useSettings} from '@core/hooks/useSettings';

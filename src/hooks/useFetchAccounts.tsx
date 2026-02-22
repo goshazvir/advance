@@ -1,8 +1,8 @@
 import {useQuery} from 'react-query';
 
 import {Account} from '@/domain/Account';
-import {QueryClientIds} from '@/QueryClient/queryClient.ids';
 import flexxApiService from '@/flexxApi/flexxApiService';
+import {QueryClientIds} from '@/QueryClient/queryClient.ids';
 
 interface useFetchAccountsArgs {
   searchQuery?: string;

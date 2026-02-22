@@ -14,7 +14,13 @@
       "Bash(head:*)",
       "Bash(yarn dev:*)",
       "Bash(git checkout:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "Bash(.specify/scripts/bash/update-agent-context.sh claude:*)",
+      "Bash(yarn ts:*)",
+      "Bash(grep:*)",
+      "Bash(git:*)"
     ]
   }
 }

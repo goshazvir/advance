@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {Stack} from '@mui/material';
-import AdvanceActionButtons from '@components/AdvanceActionButtons/AdvanceActionButtons';
-import {ActionButtonConfig} from '@components/AdvanceActionButtons/types';
 import {useCreateAccount} from '@views/accounts/hooks/useCreateAccount';
+import {ActionButtonConfig} from '@components/AdvanceActionButtons/types';
+import AdvanceActionButtons from '@components/AdvanceActionButtons/AdvanceActionButtons';
 
 const AccountsCtas: React.FC = () => {
   const {openDrawer, CreateAccountDrawer} = useCreateAccount();

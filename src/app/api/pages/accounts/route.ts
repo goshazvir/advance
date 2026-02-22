@@ -1,5 +1,5 @@
-import flexxNextApiService from '@/app/api/FlexxNextApiService/FlexxNextApiService';
 import {NextRequest} from 'next/server';
+import flexxNextApiService from '@/app/api/FlexxNextApiService/FlexxNextApiService';
 
 export const dynamic = 'force-dynamic';
 

@@ -3,9 +3,9 @@
 import React from 'react';
 
 import {Typography} from '@mui/material';
+import AccountsCtas from '@views/accounts/components/AccountsCtas';
 import FlexxDashboardWrapper from '@/components/FlexxDashboardWrapper';
 import AccountsDashboardTable from '@views/accounts/components/AccountsDashboardTable';
-import AccountsCtas from '@views/accounts/components/AccountsCtas';
 
 const AccountsPage = () => {
   return (

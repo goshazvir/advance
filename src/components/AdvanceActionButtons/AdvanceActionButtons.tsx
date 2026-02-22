@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
 
+import {LoadingButton} from '@mui/lab';
 import FlexxIcon from '@components/FlexxIcon/FlexxIcon';
 import {Skeleton, Stack, Tooltip, TooltipProps} from '@mui/material';
 import {
@@ -7,7 +8,6 @@ import {
   FlexxActionButtonsProps,
   SkeletonSize,
 } from '@components/AdvanceActionButtons/types';
-import {LoadingButton} from '@mui/lab';
 
 const AdvanceActionButtons: FC<FlexxActionButtonsProps> = ({
   actions,

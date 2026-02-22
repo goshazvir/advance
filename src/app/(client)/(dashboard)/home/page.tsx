@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 
+import FlexxDashboardWrapper from '@/components/FlexxDashboardWrapper';
 import {
   Box,
   Card,
@@ -13,7 +14,6 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import FlexxDashboardWrapper from '@/components/FlexxDashboardWrapper';
 
 const tasks = [
   {
@@ -47,7 +47,10 @@ const Home = () => {
     <FlexxDashboardWrapper>
       <Stack gap={4} sx={{pb: 4}}>
         <Box sx={{py: 2, px: 2}}>
-          <Typography variant='h3' sx={{fontWeight: 600, color: 'text.primary'}}>
+          <Typography
+            variant='h3'
+            sx={{fontWeight: 600, color: 'text.primary'}}
+          >
             Advance Frontend - Interview Assignment
           </Typography>
           <Typography variant='body1' sx={{mt: 1, color: 'text.secondary'}}>
@@ -84,7 +87,11 @@ const Home = () => {
               {tasks.map(task => (
                 <Box key={task.title}>
                   <Typography variant='h6'>{task.title}</Typography>
-                  <Typography variant='body2' color='text.secondary' sx={{mb: 1}}>
+                  <Typography
+                    variant='body2'
+                    color='text.secondary'
+                    sx={{mb: 1}}
+                  >
                     {task.description}
                   </Typography>
                   <Stack direction='row' gap={2} flexWrap='wrap'>
@@ -96,7 +103,8 @@ const Home = () => {
                         alt={task.title}
                         sx={{
                           maxWidth: '100%',
-                          width: task.images.length > 1 ? 'calc(50% - 8px)' : '100%',
+                          width:
+                            task.images.length > 1 ? 'calc(50% - 8px)' : '100%',
                           borderRadius: 1,
                           border: '1px solid',
                           borderColor: 'divider',
@@ -117,7 +125,10 @@ const Home = () => {
             </Typography>
             <List dense disablePadding>
               {[
-                ['FlexxTable', 'Data table with sorting, filtering, pagination'],
+                [
+                  'FlexxTable',
+                  'Data table with sorting, filtering, pagination',
+                ],
                 ['DrawerWrapper', 'Drawer/panel layout component'],
                 ['FlexxCustomTextInputs', 'Form input components'],
                 ['AdvanceCurrencyText', 'Currency formatting component'],
@@ -127,7 +138,13 @@ const Home = () => {
                   <ListItemText
                     primaryTypographyProps={{component: 'div'}}
                     primary={
-                      <Box sx={{typography: 'body2', display: 'flex', alignItems: 'center'}}>
+                      <Box
+                        sx={{
+                          typography: 'body2',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
                         <Chip label={name} size='small' sx={{mr: 1}} />
                         {desc}
                       </Box>
