@@ -109,7 +109,9 @@ const FlexxTable: React.FC<FlexxTableProps> = ({
   const [sortOrder, setSortOrder] = useState<SortOrder>(
     defaultSort?.defaultSort ?? 'desc',
   );
-  const [orderBy, setOrderBy] = useState<string | null>(null);
+  const [orderBy, setOrderBy] = useState<string | null>(
+    defaultSort?.field ?? null,
+  );
   const comparatorRef = useRef<Comparator<FlexxTableRow> | null>(null);
 
   const tableHeadRef = useRef<HTMLTableSectionElement>(null);
