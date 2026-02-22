@@ -13,7 +13,8 @@
       "Bash(tail:*)",
       "Bash(head:*)",
       "Bash(yarn dev:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git push:*)"
     ]
   }
 }
