@@ -131,11 +131,96 @@ Before implementing or modifying any page, **always review the corresponding scr
 - Drawers open as right-side panels overlaying the page content
 - "Add Account" and "Move Money" are **separate CTA buttons** on the accounts dashboard toolbar
 
-## Backend API docs
+## Backend API (Flexx Mock Provider v1.0.0)
 
-https://internal-fe-mock-provider.r6zcf729z3zke.us-east-1.cs.amazonlightsail.com/docs
+Base URL: `https://internal-fe-mock-provider.r6zcf729z3zke.us-east-1.cs.amazonlightsail.com`
+Swagger docs: `{base}/docs`  |  OpenAPI spec: `{base}/openapi.json`
 
 Auth is stubbed (`'no-auth'` token). Session hardcoded as `AGENCY` tenant, `ADMIN` role.
+
+All API routes go through the Next.js proxy (`src/app/api/`), so client code calls `/api/...` which forwards to the backend. When adding new endpoints, create both the API route handler AND the `flexxApiService` method.
+
+### Endpoints
+
+#### Accounts
+
+| Method | Path | Description | Params / Body |
+|--------|------|-------------|---------------|
+| `GET` | `/account` | List Accounts | `?search_term=string` (optional query) |
+| `POST` | `/account` | Create Account | Body: `{name, routing_number, account_number, bank_name, bank_icon, status, balance}` |
+| `GET` | `/account/{account_id}` | Get Account | `account_id` (path, required) |
+| `POST` | `/account/{account_id}` | Update Account | `account_id` (path) + Body: `{name, routing_number, account_number, bank_name, bank_icon, status, balance}` |
+
+#### Transactions
+
+| Method | Path | Description | Params / Body |
+|--------|------|-------------|---------------|
+| `GET` | `/account/{account_id}/transactions` | List Account Transactions | `account_id` (path, required), `?search_term=string` (optional) |
+| `GET` | `/transaction` | List All Transactions | `?account_id=string` (optional), `?search_term=string` (optional) |
+| `GET` | `/transaction/{transaction_id}` | Get Transaction | `transaction_id` (path, required) |
+
+#### Money Movement
+
+| Method | Path | Description | Body |
+|--------|------|-------------|------|
+| `POST` | `/move-money` | Move Money | `{source_account_id, destination_account_id, amount, merchant}` |
+
+#### Utility
+
+| Method | Path | Description | Response |
+|--------|------|-------------|----------|
+| `GET` | `/` | Root | `{status, service}` |
+| `GET` | `/health` | Health check | `{status, service}` |
+| `POST` | `/reset` | Reset User Data (deletes user-created accounts & transactions) | `{deleted_accounts, deleted_transactions, remaining_accounts, remaining_transactions}` |
+
+### Response schemas
+
+**Account:**
+```json
+{
+  "account_id": "string",
+  "name": "string",
+  "routing_number": "string",
+  "account_number": "string",
+  "bank_name": "string",
+  "bank_icon": "",
+  "status": "open",
+  "balance": 0,
+  "user_created": false
+}
+```
+
+**Transaction:**
+```json
+{
+  "transaction_id": "string",
+  "merchant": "string",
+  "amount": 0,
+  "direction": "credit",
+  "created_at": "string",
+  "account_id": "string",
+  "status": "pending",
+  "extra_data": {},
+  "user_created": false,
+  "account_name": ""
+}
+```
+
+**Validation Error (422):**
+```json
+{
+  "detail": [{"loc": ["string", 0], "msg": "string", "type": "string", "input": "string", "ctx": {}}]
+}
+```
+
+### Key details:
+
+- `direction` values: `"credit"` | `"debit"`
+- `status` values for accounts: `"open"` | `"closed"` | `"invalid"`
+- `status` values for transactions: `"pending"` | `"approved"`
+- `account_name` field on transactions — populated when fetching all transactions (via `/transaction`), empty when fetching per-account
+- `/move-money` returns an array of Transaction objects (the created transfer transactions)
+- All list endpoints return arrays `[...]`, single-item endpoints return objects `{...}`
 
 ---
 
