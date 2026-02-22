@@ -1,5 +1,7 @@
 'use client';
 
+import type {Account} from '@/domain/Account';
+
 import React from 'react';
 
 import {Stack, Typography} from '@mui/material';
@@ -12,9 +14,13 @@ import useAccountDrawerTransactionsTable from '@views/accounts/hooks/useAccountD
 
 interface AccountDrawerProps {
   accountId: string;
+  onMoveMoneyClick?: (account: Account) => void;
 }
 
-const AccountDrawer: React.FC<AccountDrawerProps> = ({accountId}) => {
+const AccountDrawer: React.FC<AccountDrawerProps> = ({
+  accountId,
+  onMoveMoneyClick,
+}) => {
   const {data: account, isLoading, isError} = useFetchAccount(accountId);
   const {
     data: transactions,
@@ -39,7 +45,10 @@ const AccountDrawer: React.FC<AccountDrawerProps> = ({accountId}) => {
 
   return (
     <Stack spacing={3} sx={{height: '100%', overflow: 'auto'}}>
-      <AccountDrawerHeader account={account} />
+      <AccountDrawerHeader
+        account={account}
+        onMoveMoneyClick={onMoveMoneyClick}
+      />
 
       <Typography variant='h6' fontWeight={600}>
         Transactions

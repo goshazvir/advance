@@ -10,6 +10,7 @@ import AdvanceAccountNumberDisplay from '@components/AdvanceAccountNumberDisplay
 
 interface AccountDrawerHeaderProps {
   account: Account;
+  onMoveMoneyClick?: (account: Account) => void;
 }
 
 const statusColorMap: Record<AccountStatus, 'success' | 'error' | 'warning'> = {
@@ -18,7 +19,10 @@ const statusColorMap: Record<AccountStatus, 'success' | 'error' | 'warning'> = {
   [AccountStatus.INVALID]: 'warning',
 };
 
-const AccountDrawerHeader: React.FC<AccountDrawerHeaderProps> = ({account}) => {
+const AccountDrawerHeader: React.FC<AccountDrawerHeaderProps> = ({
+  account,
+  onMoveMoneyClick,
+}) => {
   return (
     <Stack spacing={2}>
       <Stack spacing={0.5}>
@@ -66,6 +70,7 @@ const AccountDrawerHeader: React.FC<AccountDrawerHeaderProps> = ({account}) => {
           variant='outlined'
           size='small'
           startIcon={<FlexxIcon icon='fluent--arrow-swap-20-regular' />}
+          onClick={() => onMoveMoneyClick?.(account)}
         >
           Move Money
         </Button>

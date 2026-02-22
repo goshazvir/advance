@@ -1,25 +1,25 @@
 import type {Account} from '@/domain/Account';
 
 import ReactDOM from 'react-dom';
+import {toast} from 'react-toastify';
 import React, {useCallback, useMemo, useState} from 'react';
 
 import {useBoolean} from '@/hooks/useBoolean';
 import DrawerWrapper from '@components/DrawerWrapper/DrawerWrapper';
-import AccountDrawer from '@views/accounts/components/AccountDrawer';
+import MoveMoneyForm from '@views/accounts/components/MoveMoneyForm';
 
-interface UseAccountDrawerOptions {
-  onMoveMoneyFromAccount?: (account: Account) => void;
+interface UseMoveMoneOptions {
+  onSuccess?: () => void;
 }
 
-export const useAccountDrawer = (options?: UseAccountDrawerOptions) => {
-  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(
-    null,
-  );
+export const useMoveMoney = (options?: UseMoveMoneOptions) => {
   const {value: isOpen, onTrue: open, onFalse: close} = useBoolean();
+  const [prefilledSourceAccount, setPrefilledSourceAccount] =
+    useState<Account | null>(null);
 
   const openDrawer = useCallback(
-    (accountId: string) => {
-      setSelectedAccountId(accountId);
+    (account?: Account) => {
+      setPrefilledSourceAccount(account ?? null);
       open();
     },
     [open],
@@ -27,10 +27,16 @@ export const useAccountDrawer = (options?: UseAccountDrawerOptions) => {
 
   const closeDrawer = useCallback(() => {
     close();
-    setSelectedAccountId(null);
+    setPrefilledSourceAccount(null);
   }, [close]);
 
-  const AccountDrawerPortal = useMemo(() => {
+  const handleSuccess = useCallback(() => {
+    toast.success('Transfer completed successfully');
+    closeDrawer();
+    options?.onSuccess?.();
+  }, [closeDrawer, options]);
+
+  const MoveMoneyDrawer = useMemo(() => {
     if (typeof window === 'undefined') return null;
 
     return ReactDOM.createPortal(
@@ -44,24 +50,22 @@ export const useAccountDrawer = (options?: UseAccountDrawerOptions) => {
             onClick: closeDrawer,
           },
         ]}
-        drawerWidth='lg'
+        drawerWidth='md'
       >
-        {selectedAccountId && (
-          <AccountDrawer
-            accountId={selectedAccountId}
-            onMoveMoneyClick={options?.onMoveMoneyFromAccount}
-          />
-        )}
+        <MoveMoneyForm
+          isOpen={isOpen}
+          onSuccess={handleSuccess}
+          prefilledSourceAccount={prefilledSourceAccount}
+        />
       </DrawerWrapper>,
       document.body,
     );
-  }, [isOpen, closeDrawer, selectedAccountId, options]);
+  }, [isOpen, closeDrawer, handleSuccess, prefilledSourceAccount]);
 
   return {
     isOpen,
-    selectedAccountId,
     openDrawer,
     closeDrawer,
-    AccountDrawerPortal,
+    MoveMoneyDrawer,
   };
 };

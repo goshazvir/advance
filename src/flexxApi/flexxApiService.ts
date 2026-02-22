@@ -1,3 +1,5 @@
+import type {MoveMoneyPayload} from '@/domain/MoveMoneyPayload';
+
 import {Transaction} from '@/domain/Transaction';
 import {Account, AccountStatus} from '@/domain/Account';
 import {get, post, put, remove} from '@/flexxApi/FlexxApiClientService';
@@ -55,6 +57,10 @@ class FlexxApiService {
 
   async createAccount(payload: CreateAccountPayload): Promise<Account> {
     return post<Account>({endpoint: 'pages/accounts', body: payload});
+  }
+
+  async moveMoney(payload: MoveMoneyPayload): Promise<Transaction[]> {
+    return post<Transaction[]>({endpoint: 'pages/move-money', body: payload});
   }
 }
 
