@@ -62,6 +62,7 @@ const FlexxTableHeader: FC<FlexxTableHeaderProps> = ({
       <FlexxIcon
         className={rotationClass}
         icon='fluent--arrow-sort-up-lines-16-regular'
+        style={{opacity: isActive ? 1 : 0.3}}
       />
     );
   };
@@ -75,11 +76,12 @@ const FlexxTableHeader: FC<FlexxTableHeaderProps> = ({
         active={isActive}
         direction={sortDirection}
         onClick={createSortHandler(column.field, column.comparator)}
-        hideSortIcon={!isActive}
-        sx={{gap: '0.5rem'}}
-        IconComponent={() => renderSortIcon(column)}
+        hideSortIcon
+        IconComponent={() => null}
+        sx={{gap: '0.5rem', flexDirection: 'row'}}
       >
         <span>{column.headerName}</span>
+        {renderSortIcon(column)}
       </TableSortLabel>
     );
   };

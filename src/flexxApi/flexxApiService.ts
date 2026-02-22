@@ -59,6 +59,15 @@ class FlexxApiService {
     return post<Account>({endpoint: 'pages/accounts', body: payload});
   }
 
+  async fetchTransactions(params?: {
+    search_term?: string;
+  }): Promise<Transaction[]> {
+    const queryParams = this.formatQueryParams(params);
+    return get<Transaction[]>({
+      endpoint: `pages/transactions?${queryParams}`,
+    });
+  }
+
   async moveMoney(payload: MoveMoneyPayload): Promise<Transaction[]> {
     return post<Transaction[]>({endpoint: 'pages/move-money', body: payload});
   }

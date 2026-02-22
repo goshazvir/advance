@@ -14,9 +14,13 @@ function descendingComparator(
   }
   const aValue = a.data[orderBy]?.toString() ?? '';
   const bValue = b.data[orderBy]?.toString() ?? '';
-  const isNumeric = !isNaN(parseFloat(aValue)) && !isNaN(parseFloat(bValue));
-  const aCompared = isNumeric ? parseFloat(aValue) : aValue.toLowerCase();
-  const bCompared = isNumeric ? parseFloat(bValue) : bValue.toLowerCase();
+  const isNumeric =
+    aValue !== '' &&
+    bValue !== '' &&
+    !isNaN(Number(aValue)) &&
+    !isNaN(Number(bValue));
+  const aCompared = isNumeric ? Number(aValue) : aValue.toLowerCase();
+  const bCompared = isNumeric ? Number(bValue) : bValue.toLowerCase();
   return (bCompared < aCompared && -1) || (bCompared > aCompared && 1) || 0;
 }
 
