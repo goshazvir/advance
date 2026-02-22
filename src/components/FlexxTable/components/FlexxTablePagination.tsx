@@ -1,7 +1,16 @@
 import React, {FC} from 'react';
 
+import isPropValid from '@emotion/is-prop-valid';
 import {Skeleton, Stack, TablePagination} from '@mui/material';
+import {styled} from '@mui/material/styles';
 import FlexxTableActionsComponent from '@components/FlexxTable/FlexxTableActionsComponent/FlexxTableActionsComponent';
+
+// MUI's styled system uses rootShouldForwardProp which leaks CSS props
+// (like borderRadius) to DOM elements. This styled div uses emotion's
+// is-prop-valid to properly filter all non-HTML props.
+const TablePaginationRoot = styled('div', {
+  shouldForwardProp: prop => isPropValid(prop as string),
+})({});
 
 const FlexxTablePaginationSkeleton: React.FC = () => (
   <Skeleton width={400} style={{marginLeft: 'auto'}} height={52} />
@@ -62,7 +71,7 @@ const FlexxTablePagination: FC<FlexxTablePaginationProps> = ({
       >
         <Stack direction='row' flexShrink={0} ml='auto'>
           <TablePagination
-            component='div'
+            component={TablePaginationRoot}
             count={totalItems ?? rowsCount}
             page={currentPage}
             onPageChange={handlePageChange}

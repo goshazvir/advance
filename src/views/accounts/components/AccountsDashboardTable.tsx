@@ -5,15 +5,21 @@ import React from 'react';
 import useFetchAccounts from '@/hooks/useFetchAccounts';
 import {useGlobalSearch} from '@core/hooks/useGlobalSearch';
 import {FlexxTable} from '@components/FlexxTable/FlexxTable';
-import {useAccountDrawer} from '@views/accounts/hooks/useAccountDrawer';
 import useAccountsDashboardTable from '@views/accounts/hooks/useAccountsDashboardTable';
 
-const AccountsDashboardTable: React.FC = () => {
+interface AccountsDashboardTableProps {
+  openAccountDrawer: (accountId: string) => void;
+  AccountDrawerPortal: React.ReactNode;
+}
+
+const AccountsDashboardTable: React.FC<AccountsDashboardTableProps> = ({
+  openAccountDrawer,
+  AccountDrawerPortal,
+}) => {
   const {searchQuery} = useGlobalSearch();
   const {data, isLoading, isError} = useFetchAccounts({searchQuery});
-  const {openDrawer, AccountDrawerPortal} = useAccountDrawer();
   const {columns, rows} = useAccountsDashboardTable(data, {
-    onRowClick: openDrawer,
+    onRowClick: openAccountDrawer,
   });
 
   return (

@@ -20,7 +20,13 @@
       "Bash(.specify/scripts/bash/update-agent-context.sh claude:*)",
       "Bash(yarn ts:*)",
       "Bash(grep:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(bash:*)",
+      "Bash(node:*)",
+      "Bash(grep FlexxTablePagination:*)",
+      "Bash(npx eslint:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

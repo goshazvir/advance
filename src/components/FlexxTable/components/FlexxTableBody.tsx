@@ -1,6 +1,5 @@
-import React, {FC, useMemo} from 'react';
+import React, {FC} from 'react';
 
-import {formatDate} from '@/utils/formatter.utils';
 import FlexxIcon from '@components/FlexxIcon/FlexxIcon';
 import {PARAGRAPH_TEXT_FONT_SIZE} from '@/constants/font-sizes';
 import EllipsisText from '@/components/FlexxTable/components/EllipsisText';
@@ -53,58 +52,6 @@ const FlexxTableBody: FC<FlexxTableBodyProps> = ({
   cellPadding,
 }) => {
   const {palette} = useTheme();
-
-  const dateDisplayMap = useMemo(() => {
-    const map = new Map<
-      FlexxColumn,
-      {display: boolean; groupStart: boolean; groupEnd: boolean}[]
-    >();
-
-    columns.forEach(column => {
-      if (!column.dateFormat) return;
-
-      const displayInfo: {
-        display: boolean;
-        groupStart: boolean;
-        groupEnd: boolean;
-      }[] = [];
-      let previousFormattedDate: string | null = null;
-
-      rows.forEach((row, rowIndex) => {
-        const value = row.data[column.field];
-        const formattedDate = value
-          ? formatDate(value as number, column.dateFormat!)
-          : null;
-        const isFirstRow = rowIndex === 0;
-        const hasDateChanged = formattedDate !== previousFormattedDate;
-
-        if (isFirstRow || hasDateChanged) {
-          if (!isFirstRow) {
-            displayInfo[rowIndex - 1].groupEnd = true;
-          }
-          displayInfo.push({
-            display: true,
-            groupStart: true,
-            groupEnd: false,
-          });
-        } else {
-          displayInfo.push({
-            display: false,
-            groupStart: false,
-            groupEnd: false,
-          });
-        }
-        previousFormattedDate = formattedDate;
-      });
-
-      if (rows.length > 0) {
-        displayInfo[rows.length - 1].groupEnd = true;
-      }
-      map.set(column, displayInfo);
-    });
-
-    return map;
-  }, [columns, rows]);
 
   if (isLoading) {
     return (
@@ -173,26 +120,6 @@ const FlexxTableBody: FC<FlexxTableBodyProps> = ({
                     ? column.decorator(value)
                     : undefined;
                 const isDateColumn = !!column.dateFormat;
-                const displayInfo = isDateColumn
-                  ? dateDisplayMap.get(column)?.[rowIndex]
-                  : undefined;
-                const isFirstColumn = colIndex === 0;
-                const shouldDisplayDate = isDateColumn
-                  ? (displayInfo?.display || !isFirstColumn) ?? true
-                  : true;
-
-                const cellSx =
-                  isDateColumn && isFirstColumn && value
-                    ? {
-                        borderBottom: displayInfo?.groupEnd ? '' : 'none',
-                        '& .date-cell-content': {
-                          visibility: shouldDisplayDate ? 'visible' : 'hidden',
-                        },
-                        '.flexx-table-row:hover & .date-cell-content': {
-                          visibility: 'visible',
-                        },
-                      }
-                    : {};
 
                 const cellContent = parseCellContent({
                   value,
@@ -218,30 +145,21 @@ const FlexxTableBody: FC<FlexxTableBodyProps> = ({
                   alignContent: column.style?.alignContent,
                 };
 
-                const wrappedContent =
-                  isDateColumn && isFirstColumn ? (
-                    <span className='date-cell-content'>{cellContent}</span>
-                  ) : (
-                    cellContent
-                  );
-
                 return (
                   <TableCell
                     data-testid={`${dataTestId}.${column.field}.${rowIndex}`}
                     key={column.field}
                     align={column.align ?? align}
                     style={cellStyles}
-                    sx={{padding: cellPadding, ...cellSx}}
+                    sx={{padding: cellPadding}}
                   >
-                    {noWrap &&
-                    typeof cellContent === 'string' &&
-                    !(isDateColumn && isFirstColumn) ? (
+                    {noWrap && typeof cellContent === 'string' ? (
                       <EllipsisText
                         text={cellContent}
                         maxLines={maxLinesWrap}
                       />
                     ) : (
-                      wrappedContent
+                      cellContent
                     )}
                   </TableCell>
                 );
