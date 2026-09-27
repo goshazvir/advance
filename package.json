@@ -45,7 +45,7 @@
     "lodash": "^4.17.23",
     "next": "^16.0.7",
     "patch-package": "^8.0.0",
-    "postcss": "8.4.33",
+    "postcss": "8.5.28",
     "postcss-styled-syntax": "0.6.4",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "3.1.1",
