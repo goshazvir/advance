@@ -29,7 +29,7 @@
     "@iconify/tailwind": "^1.2.0",
     "@iconify/utils": "2.1.14",
     "@mui/icons-material": "^5.16.6",
-    "@mui/lab": "5.0.0-alpha.160",
+    "@mui/lab": "5.0.0-alpha.177",
     "@mui/material": "^5.16.6",
     "@mui/material-nextjs": "6.4.3",
     "@mui/x-date-pickers": "^8.19.0",
